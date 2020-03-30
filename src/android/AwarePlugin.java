@@ -11,11 +11,9 @@ import android.support.v4.content.PermissionChecker;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import edu.berkeley.eecs.emission.cordova.AwarePlugin.Applications;
-import edu.berkeley.eecs.emission.cordova.AwarePlugin.Aware;
-import edu.berkeley.eecs.emission.cordova.AwarePlugin.Aware_Preferences;
-import edu.berkeley.eecs.emission.cordova.AwarePlugin.ui.PermissionsHandler;
-import edu.berkeley.eecs.emission.cordova.AwarePlugin.providers.Aware;
+import com.aware.Applications;
+import com.aware.Aware;
+import com.aware.Aware_Preferences;
 
 public class AwarePlugin extends CordovaPlugin {
     private ArrayList<String> REQUIRED_PERMISSIONS = new ArrayList<>();
@@ -23,25 +21,23 @@ public class AwarePlugin extends CordovaPlugin {
 
     @Override
     public void pluginInitialize() {
-        REQUIRED_PERMISSIONS.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-        REQUIRED_PERMISSIONS.add(Manifest.permission.ACCESS_FINE_LOCATION);
-        REQUIRED_PERMISSIONS.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        REQUIRED_PERMISSIONS.add(Manifest.permission.ACCESS_NETWORK_STATE);
-        REQUIRED_PERMISSIONS.add(Manifest.permission.READ_CALL_LOG);
-        REQUIRED_PERMISSIONS.add(Manifest.permission.READ_CONTACTS);
-        REQUIRED_PERMISSIONS.add(Manifest.permission.READ_SMS);
-        REQUIRED_PERMISSIONS.add(Manifest.permission.READ_PHONE_STATE);
-//        REQUIRED_PERMISSIONS.add(Manifest.permission.RECORD_AUDIO);
-        REQUIRED_PERMISSIONS.add(Manifest.permission.BLUETOOTH);
-        REQUIRED_PERMISSIONS.add(Manifest.permission.BLUETOOTH_ADMIN);
-
-        REQUIRED_PERMISSIONS.add(Manifest.permission.GET_ACCOUNTS);
-        REQUIRED_PERMISSIONS.add(Manifest.permission.WRITE_SYNC_SETTINGS);
-        REQUIRED_PERMISSIONS.add(Manifest.permission.READ_SYNC_SETTINGS);
-        REQUIRED_PERMISSIONS.add(Manifest.permission.READ_SYNC_STATS);
-
-        IntentFilter filter = new IntentFilter(Aware.ACTION_JOINED_STUDY);
-        registerReceiver(joinListener, filter);
+        String[] permissions = {
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_NETWORK_STATE,
+                Manifest.permission.READ_CALL_LOG,
+                Manifest.permission.READ_CONTACTS,
+                Manifest.permission.READ_SMS,
+                Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.BLUETOOTH_ADMIN,
+                Manifest.permission.GET_ACCOUNTS,
+                Manifest.permission.WRITE_SYNC_SETTINGS,
+                Manifest.permission.READ_SYNC_SETTINGS,
+                Manifest.permission.READ_SYNC_STATS
+        };
+        cordova.requestPermissions(this, 0, permissions);
 //        AwareService service = new AwareService();
 //        service.start();
     }
