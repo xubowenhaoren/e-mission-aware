@@ -1,0 +1,17 @@
+{
+  "name": "edu.berkeley.eecs.emission.cordova.aware",
+  "version": "1.0.0",
+  "description": "Aware migration for e-mission platform",
+  "cordova": {
+    "id": "edu.berkeley.eecs.emission.cordova.aware",
+    "platforms": [
+      "android"
+    ]
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-android"
+  ],
+  "author": "Bowen Xu (bwx074@cs.washington.edu)",
+  "license": "Modified BSD license"
+}
