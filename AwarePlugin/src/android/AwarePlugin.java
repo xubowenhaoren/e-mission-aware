@@ -1,4 +1,4 @@
-package edu.berkeley.eecs.emission.cordova.AwarePlugin;
+package edu.berkeley.eecs.emission.cordova.aware;
 
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
@@ -15,6 +15,9 @@ import com.aware.Applications;
 import com.aware.Aware;
 import com.aware.Aware_Preferences;
 
+/**
+ * This class echoes a string called from JavaScript.
+ */
 public class AwarePlugin extends CordovaPlugin {
     private ArrayList<String> REQUIRED_PERMISSIONS = new ArrayList<>();
     public static final String TAG = "AwarePlugin";
@@ -43,11 +46,20 @@ public class AwarePlugin extends CordovaPlugin {
     }
 
     @Override
-    public boolean execute(String action, JSONArray data, final CallbackContext callbackContext) throws JSONException {
-        if (action.equals("getConfig")) {
-            // call AWARE code to get settings
-        } else if (action.equals("setConfig")) {
-            // call AWARE code to set settings
+    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+        if (action.equals("coolMethod")) {
+            String message = args.getString(0);
+            this.coolMethod(message, callbackContext);
+            return true;
+        }
+        return false;
+    }
+
+    private void coolMethod(String message, CallbackContext callbackContext) {
+        if (message != null && message.length() > 0) {
+            callbackContext.success(message);
+        } else {
+            callbackContext.error("Expected one non-empty string argument.");
         }
     }
 }
