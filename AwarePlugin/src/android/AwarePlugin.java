@@ -51,35 +51,21 @@ public class AwarePlugin extends CordovaPlugin {
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-        if (action.equals("coolMethod")) {
-            String message = args.getString(0);
-            this.coolMethod(message, callbackContext);
-            pluginInitialize();
+        if (action.equals("sum")) {
+            Integer num1 = args.getInt(0);
+            Integer num2 = args.getInt(1);
+            this.sum(num1, num2, callbackContext);
             return true;
-        }
-
-        if (action.equals("performAdd")) {
-            int arg1 = args.getInt(0);
-            int arg2 = args.getInt(1);
-            /* Indicating success is failure is done by calling the appropriate method on the
-            callbackContext.*/
-            int result = arg1 + arg2;
-            callbackContext.success("result calculated in Java: " + result);
-            return true;
-        }
-
-        if (action.equals("manual_sync")) {
-            // manual sync ops here
         }
         return false;
 
     }
 
-    private void coolMethod(String message, CallbackContext callbackContext) {
-        if (message != null && message.length() > 0) {
-            callbackContext.success(message);
+    private void sum(Integer num1, Integer num2, CallbackContext callbackContext) {
+        if(num1 != null && num2 != null) {
+            callbackContext.success(num1 + num2);
         } else {
-            callbackContext.error("Expected one non-empty string argument.");
+            callbackContext.error("Expected two integer arguments.");
         }
     }
 }

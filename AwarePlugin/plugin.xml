@@ -17,6 +17,7 @@
     <name>AwarePlugin</name>
     <platform name="android">
         <framework src="com.github.denzilferreira:aware-client:master-SNAPSHOT" />
+        <framework src="build-extras.gradle" custom="true" type="gradleReference" />
         <config-file parent="/*" target="res/xml/config.xml">
             <feature name="AwarePlugin">
                 <param name="android-package"
