@@ -25,15 +25,57 @@
                 <param name="onload" value="true"/>
             </feature>
         </config-file>
-        <config-file parent="/*" target="AndroidManifest.xml">
-<!--            <service-->
-<!--                android:name="com.aware.Aware"-->
-<!--                android:enabled="true"-->
-<!--                android:exported="false">-->
-<!--            </service>-->
+        <config-file parent="/manifest" target="AndroidManifest.xml">
+            <permission
+                android:name="com.aware.READ_CONTEXT_DATA"
+                android:label="Read AWARE&apos;s Context data"
+                android:protectionLevel="normal" />
+            <permission
+                android:name="com.aware.WRITE_CONTEXT_DATA"
+                android:label="Write to AWARE&apos;s Context data"
+                android:protectionLevel="normal" />
+            <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
+            <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
+            <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+
         </config-file>
         <source-file src="src/android/AwarePlugin.java"
             target-dir="src/edu/berkeley/eecs/emission/cordova/aware" />
         <resource-file src='res/android/values/bools.xml' target='res/values/bools.xml'/>
+        <resource-file src='res/android/xml/sync_gyroscope.xml' target='res/xml/sync_gyroscope.xml'/>
+        <resource-file src='res/android/xml/sync_applications.xml' target='res/xml/sync_applications.xml'/>
+        <resource-file src='res/android/xml/aware_preferences.xml' target='res/xml/aware_preferences.xml'/>
+        <resource-file src='res/android/xml/sync_light.xml' target='res/xml/sync_light.xml'/>
+        <resource-file src='res/android/xml/sync_screen.xml' target='res/xml/sync_screen.xml'/>
+        <resource-file src='res/android/xml/sync_aware_device.xml' target='res/xml/sync_aware_device.xml'/>
+        <resource-file src='res/android/xml/sync_locations.xml' target='res/xml/sync_locations.xml'/>
+        <resource-file src='res/android/xml/sync_temperature.xml' target='res/xml/sync_temperature.xml'/>
+        <resource-file src='res/android/xml/sync_accelerometer.xml' target='res/xml/sync_accelerometer.xml'/>
+        <resource-file src='res/android/xml/sync_battery.xml' target='res/xml/sync_battery.xml'/>
+        <resource-file src='res/android/xml/sync_installations.xml' target='res/xml/sync_installations.xml'/>
+        <resource-file src='res/android/xml/sync_wifi.xml' target='res/xml/sync_wifi.xml'/>
+        <resource-file src='res/android/xml/aware_accessibility_config.xml' target='res/xml/aware_accessibility_config.xml'/>
+        <resource-file src='res/android/xml/sync_rotation.xml' target='res/xml/sync_rotation.xml'/>
+        <resource-file src='res/android/xml/sync_magnetometer.xml' target='res/xml/sync_magnetometer.xml'/>
+        <resource-file src='res/android/xml/sync_telephony.xml' target='res/xml/sync_telephony.xml'/>
+        <resource-file src='res/android/xml/sync_bluetooth.xml' target='res/xml/sync_bluetooth.xml'/>
+        <resource-file src='res/android/xml/sync_keyboard.xml' target='res/xml/sync_keyboard.xml'/>
+        <resource-file src='res/android/xml/sync_gravity.xml' target='res/xml/sync_gravity.xml'/>
+        <resource-file src='res/android/xml/sync_network.xml' target='res/xml/sync_network.xml'/>
+        <resource-file src='res/android/xml/provider_paths.xml' target='res/xml/provider_paths.xml'/>
+        <resource-file src='res/android/xml/sync_barometer.xml' target='res/xml/sync_barometer.xml'/>
+        <resource-file src='res/android/xml/aware_ssl_config.xml' target='res/xml/aware_ssl_config.xml'/>
+        <resource-file src='res/android/xml/sync_esms.xml' target='res/xml/sync_esms.xml'/>
+        <resource-file src='res/android/xml/sync_proximity.xml' target='res/xml/sync_proximity.xml'/>
+        <resource-file src='res/android/xml/sync_significant.xml' target='res/xml/sync_significant.xml'/>
+        <resource-file src='res/android/xml/sync_communications.xml' target='res/xml/sync_communications.xml'/>
+        <resource-file src='res/android/xml/sync_processor.xml' target='res/xml/sync_processor.xml'/>
+        <resource-file src='res/android/xml/aware_authenticator.xml' target='res/xml/aware_authenticator.xml'/>
+        <resource-file src='res/android/xml/sync_traffic.xml' target='res/xml/sync_traffic.xml'/>
+        <resource-file src='res/android/xml/sync_linear_accelerometer.xml' target='res/xml/sync_linear_accelerometer.xml'/>
+        <resource-file src='res/android/xml/sync_timezones.xml' target='res/xml/sync_timezones.xml'/>
     </platform>
 </plugin>

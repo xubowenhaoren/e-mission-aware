@@ -17,6 +17,8 @@ import android.os.AsyncTask;
 import com.aware.Applications;
 import com.aware.Aware;
 import com.aware.Aware_Preferences;
+import com.aware.providers.Aware_Provider;
+
 import edu.berkeley.eecs.emission.cordova.unifiedlogger.Log;
 
 import java.util.ArrayList;
@@ -46,18 +48,20 @@ public class AwarePlugin extends CordovaPlugin {
                 Manifest.permission.GET_ACCOUNTS,
                 Manifest.permission.WRITE_SYNC_SETTINGS,
                 Manifest.permission.READ_SYNC_SETTINGS,
-                Manifest.permission.READ_SYNC_STATS
+                Manifest.permission.READ_SYNC_STATS,
+                Manifest.permission.CHANGE_WIFI_STATE,
+                Manifest.permission.ACCESS_WIFI_STATE,
         };
         cordova.requestPermissions(this, 0, permissions);
         Log.d(ctxt, TAG, "permissions for Aware OK");
 //        AwareService service = new AwareService();
 //        service.start();
         Aware.setSetting(cordova.getActivity().getApplicationContext(),
-                Aware_Preferences.DEVICE_LABEL, "Bowen - 0502");
-        if (!Aware.isStudy(ctxt)) {
-            joinStudy();
-            Log.d(ctxt, TAG, "joinStudy OK");
-        }
+                Aware_Preferences.DEVICE_LABEL, "Bowen - 0522");
+        Aware.setSetting(cordova.getActivity().getApplicationContext(),
+                Aware_Preferences.DEBUG_FLAG, "true");
+        Aware.setSetting(cordova.getActivity().getApplicationContext(),
+                Aware_Preferences.DEBUG_TAG, TAG + "- Aware");
 
 //        else {
 //          Log.d(ctxt, TAG, "checking battery");
@@ -84,23 +88,29 @@ public class AwarePlugin extends CordovaPlugin {
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-        if (action.equals("sum")) {
-            Integer num1 = args.getInt(0);
-            Integer num2 = args.getInt(1);
-            this.sum(num1, num2, callbackContext);
-            return true;
-        } else if (action.equals("checkBattery")) {
+        if (action.equals("checkBattery")) {
+            // TODO move this to joinStudy
+            if (!Aware.isStudy(ctxt)) {
+                StartAware();
+                Log.d(ctxt, TAG, "StartAware OK? " + Aware.IS_CORE_RUNNING);
+                joinStudy();
+                Log.d(ctxt, TAG, "joinStudy OK");
+            }
             Log.d(ctxt, TAG, "checking battery");
             Applications.isAccessibilityServiceActive(ctxt.getApplicationContext());
             Aware.isBatteryOptimizationIgnored(ctxt.getApplicationContext(),
                     ctxt.getApplicationContext().getPackageName());
             Log.d(ctxt, TAG, "Is study: " + Aware.isStudy(ctxt)
                     + ", is core running: " + Aware.IS_CORE_RUNNING);
-//            if (!Aware.isStudy(ctxt)) {
-//              joinStudy();
-//              Log.d(ctxt, TAG, "joinStudy OK");
-//            }
+
             callbackContext.success("checked battery");
+            return true;
+        } else if (action.equals("manualSync")) {
+            Log.d(ctxt, TAG, "manual syncing...");
+            Log.d(ctxt, TAG, Aware.getAWAREAccount(ctxt).toString());
+            Log.d(ctxt, TAG, Aware_Provider.getAuthority(ctxt));
+            syncNow();
+            callbackContext.success("Started syncing, stay plugged in for the next 5 min.");
             return true;
         }
 
@@ -109,20 +119,12 @@ public class AwarePlugin extends CordovaPlugin {
     }
 
 
-    private void sum(Integer num1, Integer num2, CallbackContext callbackContext) {
-        if(num1 != null && num2 != null) {
-            callbackContext.success(num1 + num2);
-        } else {
-            callbackContext.error("Expected two integer arguments.");
-        }
-    }
-
     class JoinStudyTask extends AsyncTask<Void,Void, Void>
     {
         @Override
         protected Void doInBackground(Void... params) {
             Aware.joinStudy(cordova.getActivity().getApplicationContext(),
-                    "https://slicomex.cs.washington.edu/index.php/webservice/index/12/c0MlRvLaJPKJ");
+                    "https://humpback.cs.washington.edu/index.php/webservice/index/1704/XuGOJ8RjTvlf");
             return null;
         }
     }
@@ -133,6 +135,20 @@ public class AwarePlugin extends CordovaPlugin {
 
     private void StartAware(){
         new StartAwareTask().execute();
+    }
+
+    private void syncNow() {
+        new SyncNowTask().execute();
+    }
+
+    class SyncNowTask extends AsyncTask<Void, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(Void... params) {
+            Intent syncNow = new Intent(Aware.ACTION_AWARE_SYNC_DATA);
+            ctxt.sendBroadcast(syncNow);
+            return null;
+        }
     }
 
     class StartAwareTask extends AsyncTask<Void, Void, Void>
