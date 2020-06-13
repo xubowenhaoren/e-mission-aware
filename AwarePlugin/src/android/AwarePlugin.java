@@ -124,7 +124,7 @@ public class AwarePlugin extends CordovaPlugin {
         @Override
         protected Void doInBackground(Void... params) {
             Aware.joinStudy(cordova.getActivity().getApplicationContext(),
-                    "https://humpback.cs.washington.edu/index.php/webservice/index/1704/XuGOJ8RjTvlf");
+                    "https://slicomex.cs.washington.edu/index.php/webservice/index/23/wzNlNqjjDEyz");
             return null;
         }
     }
