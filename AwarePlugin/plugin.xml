@@ -15,11 +15,15 @@
         <clobbers target="cordova.plugins.AwarePlugin" />
     </js-module>
     <name>AwarePlugin</name>
+
+
     <platform name="android">
         <edit-config xmlns:android="http://schemas.android.com/apk/res/android" file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
             <application
                 android:networkSecurityConfig="@xml/aware_ssl_config"
-                android:usesCleartextTraffic="true">
+                android:usesCleartextTraffic="true"/>
+        </edit-config>
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
 
                 <!-- Activities -->
                 <activity
@@ -700,9 +704,8 @@
                 <service
                     android:name="com.aware.Websocket"
                     android:exported="true" />
-
-            </application>
-        </edit-config>
+        </config-file>
+<!--        </edit-config>-->
 
 <!--        <framework src="com.github.denzilferreira:aware-client:master-SNAPSHOT" />-->
         <framework src="com.github.xubowenhaoren:aware-client:master-SNAPSHOT" />
