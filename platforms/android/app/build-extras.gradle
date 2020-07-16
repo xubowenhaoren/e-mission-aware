@@ -1,5 +1,6 @@
 android {
     defaultConfig {
+        applicationId "edu.berkeley.eecs.emission"
         resValue "string", "provider_accelerometer", android.defaultConfig.applicationId + ".provider.accelerometer"
         resValue "string", "provider_applications", android.defaultConfig.applicationId + ".provider.applications"
         resValue "string", "provider_aware", android.defaultConfig.applicationId + ".provider.aware"
