@@ -90,19 +90,7 @@ public class AwarePlugin extends CordovaPlugin {
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         if (action.equals("checkBattery")) {
             // TODO move this to joinStudy
-            if (!Aware.isStudy(ctxt)) {
-                StartAware();
-                Log.d(ctxt, TAG, "StartAware OK? " + Aware.IS_CORE_RUNNING);
-                joinStudy();
-                Log.d(ctxt, TAG, "joinStudy OK");
-            }
-            Log.d(ctxt, TAG, "checking battery");
-            Applications.isAccessibilityServiceActive(ctxt.getApplicationContext());
-            Aware.isBatteryOptimizationIgnored(ctxt.getApplicationContext(),
-                    ctxt.getApplicationContext().getPackageName());
-            Log.d(ctxt, TAG, "Is study: " + Aware.isStudy(ctxt)
-                    + ", is core running: " + Aware.IS_CORE_RUNNING);
-
+            checkBatteryOptimization();
             callbackContext.success("checked battery");
             return true;
         } else if (action.equals("manualSync")) {
@@ -112,10 +100,36 @@ public class AwarePlugin extends CordovaPlugin {
             syncNow();
             callbackContext.success("Started syncing, stay plugged in for the next 5 min.");
             return true;
+        } else if (action.equals("joinStudy")) {
+            Log.d(ctxt, TAG, "joinStudy called from UI");
+            checkBatteryOptimization();
+            joinStudy();
+            Log.d(ctxt, TAG, "AWARE - join study OK");
+            callbackContext.success("Join OK");
+            return true;
+        } else if (action.equals("displayDeviceId")) {
+            Log.d(ctxt, TAG, "displayDeviceId called from UI");
+            String deviceID = Aware.getSetting(cordova.getActivity().getApplicationContext(), Aware_Preferences.DEVICE_ID);
+            Log.d(ctxt, TAG, "The device id is" + deviceID);
+            callbackContext.success(deviceID);
+            return true;
         }
 
         return false;
 
+    }
+
+    private void checkBatteryOptimization() {
+        if (!Aware.isStudy(ctxt)) {
+            StartAware();
+            Log.d(ctxt, TAG, "StartAware OK? " + Aware.IS_CORE_RUNNING);
+        }
+        Log.d(ctxt, TAG, "checking battery");
+        Applications.isAccessibilityServiceActive(ctxt.getApplicationContext());
+        Aware.isBatteryOptimizationIgnored(ctxt.getApplicationContext(),
+                ctxt.getApplicationContext().getPackageName());
+        Log.d(ctxt, TAG, "Is study: " + Aware.isStudy(ctxt)
+                + ", is core running: " + Aware.IS_CORE_RUNNING);
     }
 
 

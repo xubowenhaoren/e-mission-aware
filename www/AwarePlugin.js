@@ -24,3 +24,11 @@ window.checkBattery = function(successCallback, errorCallback) {
 window.manualSync = function(successCallback, errorCallback) {
 	cordova.exec(successCallback, errorCallback, "AwarePlugin", "manualSync");
 };
+
+window.joinStudy = function(successCallback, errorCallback) {
+    cordova.exec(successCallback, errorCallback, "AwarePlugin", "joinStudy");
+};
+
+window.displayDeviceId = function(successCallback, errorCallback) {
+    cordova.exec(successCallback, errorCallback, "AwarePlugin", "displayDeviceId");
+};
