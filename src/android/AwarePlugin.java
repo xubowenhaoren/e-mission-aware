@@ -57,8 +57,6 @@ public class AwarePlugin extends CordovaPlugin {
 //        AwareService service = new AwareService();
 //        service.start();
         Aware.setSetting(cordova.getActivity().getApplicationContext(),
-                Aware_Preferences.DEVICE_LABEL, "Bowen - 0522");
-        Aware.setSetting(cordova.getActivity().getApplicationContext(),
                 Aware_Preferences.DEBUG_FLAG, "true");
         Aware.setSetting(cordova.getActivity().getApplicationContext(),
                 Aware_Preferences.DEBUG_TAG, TAG + "- Aware");
@@ -112,7 +110,8 @@ public class AwarePlugin extends CordovaPlugin {
                 Log.d(ctxt, TAG, "AWARE - join study NOT needed, already in study");
                 callbackContext.success("You are already in a study.");
             } else {
-                joinStudy();
+                String pid = args.getString(0);
+                joinStudy(pid);
                 Log.d(ctxt, TAG, "AWARE - join study OK");
                 callbackContext.success("Join OK");
             }
@@ -170,8 +169,10 @@ public class AwarePlugin extends CordovaPlugin {
         }
     }
 
-    private void joinStudy() {
+    private void joinStudy(String pid) {
         checkBatteryOptimization();
+        Aware.setSetting(cordova.getActivity().getApplicationContext(),
+                Aware_Preferences.DEVICE_LABEL, pid);
         new JoinStudyTask().execute();
     }
 
