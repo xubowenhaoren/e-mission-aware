@@ -147,7 +147,7 @@ public class AwarePlugin extends CordovaPlugin {
                 callbackContext.success(deviceID);
             } else {
                 String PID = Aware.getSetting(cordova.getActivity().getApplicationContext(), Aware_Preferences.DEVICE_LABEL);
-                String message = "The PID is " + PID;
+                String message = PID + " (Already in study)";
                 Log.d(ctxt, TAG, message);
                 callbackContext.success(message);
             }
