@@ -95,17 +95,27 @@ public class AwarePlugin extends CordovaPlugin {
             return true;
         } else if (action.equals("manualSync")) {
             Log.d(ctxt, TAG, "manual syncing...");
-            Log.d(ctxt, TAG, Aware.getAWAREAccount(ctxt).toString());
-            Log.d(ctxt, TAG, Aware_Provider.getAuthority(ctxt));
-            syncNow();
-            callbackContext.success("Started syncing, stay plugged in for the next 5 min.");
+            if (Aware.isStudy(ctxt)) {
+                Log.d(ctxt, TAG, Aware.getAWAREAccount(ctxt).toString());
+                Log.d(ctxt, TAG, Aware_Provider.getAuthority(ctxt));
+                syncNow();
+                callbackContext.success("Started syncing, stay plugged in for the next 5 min.");
+            } else {
+                Log.d(ctxt, TAG, "AWARE - do not sync, not in study");
+                callbackContext.success("You are not in a study yet.");
+            }
             return true;
         } else if (action.equals("joinStudy")) {
             Log.d(ctxt, TAG, "joinStudy called from UI");
-            checkBatteryOptimization();
-            joinStudy();
-            Log.d(ctxt, TAG, "AWARE - join study OK");
-            callbackContext.success("Join OK");
+            // Check if we already joined a study
+            if (Aware.isStudy(ctxt)) {
+                Log.d(ctxt, TAG, "AWARE - join study NOT needed, already in study");
+                callbackContext.success("You are already in a study.");
+            } else {
+                joinStudy();
+                Log.d(ctxt, TAG, "AWARE - join study OK");
+                callbackContext.success("Join OK");
+            }
             return true;
         } else if (action.equals("displayDeviceId")) {
             Log.d(ctxt, TAG, "displayDeviceId called from UI");
@@ -144,6 +154,7 @@ public class AwarePlugin extends CordovaPlugin {
     }
 
     private void joinStudy() {
+        checkBatteryOptimization();
         new JoinStudyTask().execute();
     }
 
