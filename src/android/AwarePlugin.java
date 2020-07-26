@@ -92,57 +92,70 @@ public class AwarePlugin extends CordovaPlugin {
             callbackContext.success("checked battery");
             return true;
         } else if (action.equals("manualSync")) {
-            Log.d(ctxt, TAG, "manual syncing...");
-            if (Aware.isStudy(ctxt)) {
-                Log.d(ctxt, TAG, Aware.getAWAREAccount(ctxt).toString());
-                Log.d(ctxt, TAG, Aware_Provider.getAuthority(ctxt));
-                syncNow();
-                callbackContext.success("Started syncing, stay plugged in for the next 5 min.");
-            } else {
-                Log.d(ctxt, TAG, "AWARE - do not sync, not in study");
-                callbackContext.success("You are not in a study yet.");
-            }
-            return true;
+            return manualSyncAction(callbackContext);
         } else if (action.equals("joinStudy")) {
-            Log.d(ctxt, TAG, "joinStudy called from UI");
-            // Check if we already joined a study
-            if (Aware.isStudy(ctxt)) {
-                Log.d(ctxt, TAG, "AWARE - join study NOT needed, already in study");
-                callbackContext.success("You are already in a study.");
+            String pid = args.getString(0).trim();
+            Log.d(ctxt, TAG, "AWARE - join study got pid:" + pid);
+            return joinStudyAction(pid, callbackContext);
+        } else if (action.equals("displayDeviceId")) {
+            return displaySomeIDAction(action, callbackContext);
+        } else if (action.equals("displayPid")) {
+            return displaySomeIDAction(action, callbackContext);
+        }
+        return false;
+    }
+
+    private boolean manualSyncAction(CallbackContext callbackContext) {
+        Log.d(ctxt, TAG, "manual syncing...");
+        if (Aware.isStudy(ctxt)) {
+            Log.d(ctxt, TAG, Aware.getAWAREAccount(ctxt).toString());
+            Log.d(ctxt, TAG, Aware_Provider.getAuthority(ctxt));
+            syncNow();
+            callbackContext.success("Started syncing, stay plugged in for the next 5 min.");
+        } else {
+            Log.d(ctxt, TAG, "AWARE - do not sync, not in study");
+            callbackContext.success("You are not in a study yet.");
+        }
+        return true;
+    }
+
+    private boolean joinStudyAction(String pid, CallbackContext callbackContext) {
+        Log.d(ctxt, TAG, "joinStudy called from UI");
+        // Check if we already joined a study
+        if (Aware.isStudy(ctxt)) {
+            Log.d(ctxt, TAG, "AWARE - join study NOT needed, already in study");
+            callbackContext.success("You are already in a study.");
+        } else {
+            if (pid.length() < 3 || pid.equals("null") || pid == null) {
+                Log.d(ctxt, TAG, "AWARE - join study NOT OK, PID too short");
+                callbackContext.success("NOT OK, PID too short");
             } else {
-                String pid = args.getString(0);
                 joinStudy(pid);
                 Log.d(ctxt, TAG, "AWARE - join study OK");
                 callbackContext.success("Join OK");
             }
-            return true;
-        } else if (action.equals("displayDeviceId")) {
-            if (Aware.isStudy(ctxt)) {
-                Log.d(ctxt, TAG, "displayDeviceId called from UI");
+        }
+        return true;
+    }
+
+    private boolean displaySomeIDAction(String idType, CallbackContext callbackContext) {
+        if (Aware.isStudy(ctxt)) {
+            Log.d(ctxt, TAG, idType + " called from UI");
+            if (idType.equals("displayDeviceId")) {
                 String deviceID = Aware.getSetting(cordova.getActivity().getApplicationContext(), Aware_Preferences.DEVICE_ID);
                 Log.d(ctxt, TAG, "The device id is" + deviceID);
                 callbackContext.success(deviceID);
             } else {
-                Log.d(ctxt, TAG, "AWARE - displayDeviceId NOT needed, not in study");
-                callbackContext.success("You are not in a study yet.");
-            }
-            return true;
-        } else if (action.equals("displayPid")) {
-            Log.d(ctxt, TAG, "displayPid called from UI");
-            if (Aware.isStudy(ctxt)) {
                 String PID = Aware.getSetting(cordova.getActivity().getApplicationContext(), Aware_Preferences.DEVICE_LABEL);
                 String message = "The PID is " + PID;
                 Log.d(ctxt, TAG, message);
                 callbackContext.success(message);
-            } else {
-                Log.d(ctxt, TAG, "AWARE - displayPid NOT needed, not in study");
-                callbackContext.success("You are not in a study yet.");
             }
-            return true;
+        } else {
+            Log.d(ctxt, TAG, "AWARE - " + idType + " NOT needed, not in study");
+            callbackContext.success("You are not in a study yet.");
         }
-
-        return false;
-
+        return true;
     }
 
     private void checkBatteryOptimization() {
