@@ -32,3 +32,7 @@ window.joinStudy = function(successCallback, errorCallback) {
 window.displayDeviceId = function(successCallback, errorCallback) {
     cordova.exec(successCallback, errorCallback, "AwarePlugin", "displayDeviceId");
 };
+
+window.displayPid = function(successCallback, errorCallback) {
+    cordova.exec(successCallback, errorCallback, "AwarePlugin", "displayPid");
+};
