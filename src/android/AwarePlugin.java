@@ -9,6 +9,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import android.Manifest;
 //import androidx.core.content.PermissionChecker;
+import android.content.ContentValues;
+import android.database.Cursor;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -54,19 +56,10 @@ public class AwarePlugin extends CordovaPlugin {
         };
         cordova.requestPermissions(this, 0, permissions);
         Log.d(ctxt, TAG, "permissions for Aware OK");
-//        AwareService service = new AwareService();
-//        service.start();
         Aware.setSetting(cordova.getActivity().getApplicationContext(),
                 Aware_Preferences.DEBUG_FLAG, "true");
         Aware.setSetting(cordova.getActivity().getApplicationContext(),
                 Aware_Preferences.DEBUG_TAG, TAG + "- Aware");
-
-//        else {
-//          Log.d(ctxt, TAG, "checking battery");
-//          Applications.isAccessibilityServiceActive(ctxt.getApplicationContext());
-//          Aware.isBatteryOptimizationIgnored(ctxt.getApplicationContext(),
-//            ctxt.getApplicationContext().getPackageName());
-//        }
         try {
             JSONObject installedVersion = new JSONObject();
             installedVersion.put("package_installed", ctxt.getPackageName());
@@ -75,12 +68,6 @@ public class AwarePlugin extends CordovaPlugin {
             AwareDebug(installedVersion);
         } catch (JSONException e) {
             e.printStackTrace();
-        }
-        if (!Aware.IS_CORE_RUNNING) {
-            StartAware();
-            Log.d(ctxt, TAG, "StartAware OK? " + Aware.IS_CORE_RUNNING);
-        } else {
-            Log.d(ctxt, TAG, "Aware already started");
         }
     }
 
@@ -101,11 +88,23 @@ public class AwarePlugin extends CordovaPlugin {
             return displaySomeIDAction(action, callbackContext);
         } else if (action.equals("displayPid")) {
             return displaySomeIDAction(action, callbackContext);
+        } else if (action.equals("exitStudy")) {
+            return exitStudyAction(callbackContext);
         }
         return false;
     }
 
+    public void startAwareServiceHelper() {
+        if (!Aware.IS_CORE_RUNNING) {
+            StartAware();
+            Log.d(ctxt, TAG, "StartAware OK? " + Aware.IS_CORE_RUNNING);
+        } else {
+            Log.d(ctxt, TAG, "Aware already started");
+        }
+    }
+
     private boolean manualSyncAction(CallbackContext callbackContext) {
+        startAwareServiceHelper();
         Log.d(ctxt, TAG, "manual syncing...");
         if (Aware.isStudy(ctxt)) {
             Log.d(ctxt, TAG, Aware.getAWAREAccount(ctxt).toString());
@@ -120,6 +119,7 @@ public class AwarePlugin extends CordovaPlugin {
     }
 
     private boolean joinStudyAction(String pid, CallbackContext callbackContext) {
+        startAwareServiceHelper();
         Log.d(ctxt, TAG, "joinStudy called from UI");
         // Check if we already joined a study
         if (Aware.isStudy(ctxt)) {
@@ -138,7 +138,35 @@ public class AwarePlugin extends CordovaPlugin {
         return true;
     }
 
+    private boolean exitStudyAction(CallbackContext callbackContext) {
+        Log.d(ctxt, TAG, "exitStudy called from UI");
+        // Check if we already joined a study
+        if (Aware.isStudy(ctxt)) {
+            String studyUrl = "https://slicomex.cs.washington.edu/index.php/webservice/index/23/wzNlNqjjDEyz";
+            Cursor study = Aware.getStudy(ctxt, studyUrl);
+            if (study != null && study.moveToFirst()) {
+                ContentValues studyData = new ContentValues();
+                studyData.put(Aware_Provider.Aware_Studies.STUDY_JOINED, 0);
+                studyData.put(Aware_Provider.Aware_Studies.STUDY_EXIT, 1);
+                ctxt.getContentResolver().update(Aware_Provider.Aware_Studies.CONTENT_URI, studyData, Aware_Provider.Aware_Studies.STUDY_URL + " LIKE '" + studyUrl + "'", null);
+            }
+            if (study != null && !study.isClosed()) study.close();
+            if (Aware.isStudy(ctxt)) {
+                callbackContext.success("Exit study FAILED!");
+            }
+            StopAware();
+            callbackContext.success("Exit study success!");
+        } else {
+            // We are not in a study.
+            Log.d(ctxt, TAG, "AWARE - exit study NOT needed, already out of study");
+            StopAware();
+            callbackContext.success("You are not in a study.");
+        }
+        return true;
+    }
+
     private boolean displaySomeIDAction(String idType, CallbackContext callbackContext) {
+        startAwareServiceHelper();
         if (Aware.isStudy(ctxt)) {
             Log.d(ctxt, TAG, idType + " called from UI");
             if (idType.equals("displayDeviceId")) {
@@ -159,6 +187,7 @@ public class AwarePlugin extends CordovaPlugin {
     }
 
     private void checkBatteryOptimization() {
+        startAwareServiceHelper();
         if (!Aware.isStudy(ctxt)) {
             StartAware();
             Log.d(ctxt, TAG, "StartAware OK? " + Aware.IS_CORE_RUNNING);
@@ -193,6 +222,10 @@ public class AwarePlugin extends CordovaPlugin {
         new StartAwareTask().execute();
     }
 
+    private void StopAware(){
+        new StopAwareTask().execute();
+    }
+
     private void syncNow() {
         new SyncNowTask().execute();
     }
@@ -213,6 +246,16 @@ public class AwarePlugin extends CordovaPlugin {
         protected Void doInBackground(Void... params) {
             Intent aware = new Intent(ctxt, Aware.class);
             ctxt.startService(aware);
+            return null;
+        }
+    }
+
+    class StopAwareTask extends AsyncTask<Void, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(Void... params) {
+            Intent aware = new Intent(ctxt, Aware.class);
+            ctxt.stopService(aware);
             return null;
         }
     }
