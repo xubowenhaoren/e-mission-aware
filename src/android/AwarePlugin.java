@@ -151,6 +151,9 @@ public class AwarePlugin extends CordovaPlugin {
                 ctxt.getContentResolver().update(Aware_Provider.Aware_Studies.CONTENT_URI, studyData, Aware_Provider.Aware_Studies.STUDY_URL + " LIKE '" + studyUrl + "'", null);
             }
             if (study != null && !study.isClosed()) study.close();
+
+            // Now, we shut down all Aware sensors.
+            Aware.quitStudy(ctxt);
             if (Aware.isStudy(ctxt)) {
                 callbackContext.success("Exit study FAILED!");
             }
