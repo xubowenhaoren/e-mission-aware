@@ -24,7 +24,6 @@ To learn more about the AWARE platform, click [here](http://awareframework.com/)
 4. In your local emission workspace terminal, type the following commands
 
    ```bash
-   npx cordova plugin add cordova-plugin-dialogs
    npx cordova plugin add file:/Users/bowenxu2/Documents/GitHub/e-mission-aware-battery/
    ```
 

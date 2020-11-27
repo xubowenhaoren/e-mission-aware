@@ -31,6 +31,7 @@ import java.util.ArrayList;
 public class AwarePlugin extends CordovaPlugin {
     //    private ArrayList<String> REQUIRED_PERMISSIONS = new ArrayList<>();
     public static final String TAG = "AwarePlugin";
+    public static final String STUDYLINK = "https://humpback.cs.washington.edu/index.php/webservice/index/1709/YVwuw8ewqxB7";
     private Context ctxt;
 
     @Override
@@ -142,13 +143,12 @@ public class AwarePlugin extends CordovaPlugin {
         Log.d(ctxt, TAG, "exitStudy called from UI");
         // Check if we already joined a study
         if (Aware.isStudy(ctxt)) {
-            String studyUrl = "https://slicomex.cs.washington.edu/index.php/webservice/index/23/wzNlNqjjDEyz";
-            Cursor study = Aware.getStudy(ctxt, studyUrl);
+            Cursor study = Aware.getStudy(ctxt, STUDYLINK);
             if (study != null && study.moveToFirst()) {
                 ContentValues studyData = new ContentValues();
                 studyData.put(Aware_Provider.Aware_Studies.STUDY_JOINED, 0);
                 studyData.put(Aware_Provider.Aware_Studies.STUDY_EXIT, 1);
-                ctxt.getContentResolver().update(Aware_Provider.Aware_Studies.CONTENT_URI, studyData, Aware_Provider.Aware_Studies.STUDY_URL + " LIKE '" + studyUrl + "'", null);
+                ctxt.getContentResolver().update(Aware_Provider.Aware_Studies.CONTENT_URI, studyData, Aware_Provider.Aware_Studies.STUDY_URL + " LIKE '" + STUDYLINK + "'", null);
             }
             if (study != null && !study.isClosed()) study.close();
 
@@ -208,8 +208,8 @@ public class AwarePlugin extends CordovaPlugin {
     {
         @Override
         protected Void doInBackground(Void... params) {
-            Aware.joinStudy(cordova.getActivity().getApplicationContext(),
-                    "https://slicomex.cs.washington.edu/index.php/webservice/index/23/wzNlNqjjDEyz");
+            Log.d(ctxt, TAG, "Joining study with link " + STUDYLINK);
+            Aware.joinStudy(cordova.getActivity().getApplicationContext(), STUDYLINK);
             return null;
         }
     }
