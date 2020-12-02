@@ -1,7 +1,7 @@
-# e-mission-aware-battery
+# e-mission-aware
 #### What's this?
 
-This project is a plugin for e-mission platform that incorporates AWARE data collection functionalities. 
+This project is a plugin for e-mission platform that incorporates AWARE data collection features. 
 
 To learn more about the e-mission platform, click [here](https://github.com/e-mission/e-mission-phone/).
 
